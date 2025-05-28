@@ -53,7 +53,11 @@ To use Azure models or Ollama please install with the optional dependencies:
 pip install magentic-ui[azure] 
 # for Ollama
 pip install magentic-ui[ollama]
+# for Google Gemini
+pip install magentic-ui google-generativeai
 ```
+
+To use Google Gemini models, you'll also need to configure the client. See the [Custom Client Configuration](#custom-client-configuration) section for details on how to set the `provider` to `"magentic_ui.models.gemini_client.GeminiChatCompletionClient"` and configure your `GEMINI_API_KEY`.
 
 
 ## Table of Contents
@@ -211,6 +215,20 @@ web_surfer_client: *client
 file_surfer_client: *client
 action_guard_client: *client
 ```
+
+Similarly, for Google Gemini models, you would configure the client by setting the `provider` to `"magentic_ui.models.gemini_client.GeminiChatCompletionClient"`. Ensure you have the `google-generativeai` package installed (`pip install google-generativeai`) and your `GEMINI_API_KEY` environment variable is set or provided in the configuration. An example snippet for your `config.yaml` or direct configuration might look like:
+
+```yaml
+# ... other configurations ...
+model_config: &gemini_client_example # Or use directly for a specific agent
+  provider: magentic_ui.models.gemini_client.GeminiChatCompletionClient
+  config:
+    model: "gemini-1.5-flash-latest" # Or your preferred Gemini model
+    api_key: ${GEMINI_API_KEY} # Example of sourcing from environment variable
+    # Add other Gemini-specific parameters here if needed
+  max_retries: 5
+```
+This example uses an environment variable `GEMINI_API_KEY` for the API key, which is a recommended practice. You can then assign this `&gemini_client_example` to specific agents (e.g., `coder_client: *gemini_client_example`) or set it as a default if your setup supports it.
 
 ### Building Magentic-UI from source
 

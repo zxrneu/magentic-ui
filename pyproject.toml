@@ -39,6 +39,7 @@ dependencies = [
     "pyyaml",
     "html2text",
     "psutil",
+    "google-generativeai>=0.6.0", # Attempting to resolve protobuf conflict
 ]
 
 [project.optional-dependencies]

@@ -10,6 +10,52 @@ class ModelClientConfigs(BaseModel):
     Attributes:
         default_client_config (dict): Default configuration for the model clients.
         orchestrator (Optional[Union[ComponentModel, Dict[str, Any]]]): Configuration for the orchestrator component. Default: None.
+        # ... other client attributes (web_surfer, coder, etc.)
+
+    To configure an agent (e.g., the 'coder' agent) to use Google Gemini, you would set
+    the corresponding attribute in an instance of `ModelClientConfigs` to a `ComponentModel`
+    that specifies the Gemini client provider and its configuration.
+
+    Example:
+    ```python
+    import os
+    from autogen_core import ComponentModel
+    from magentic_ui.magentic_ui_config import ModelClientConfigs
+
+    # Configuration for the coder agent to use Gemini
+    gemini_coder_config = ComponentModel(
+        # Provider string must match the path to your Gemini client class
+        provider="magentic_ui.models.gemini_client.GeminiChatCompletionClient",
+        config={
+            "model": "gemini-1.5-flash-latest",  # Or your preferred Gemini model like "gemini-pro"
+            "api_key": os.environ.get("GEMINI_API_KEY"), # Recommended: load API key from environment
+            # Add other Gemini-specific parameters here if needed by your client's __init__
+        },
+        # Optional parameters like max_retries can also be part of ComponentModel
+        max_retries=5, 
+        # timeout=120, # Example: if your client supports a timeout parameter
+    )
+
+    # Create ModelClientConfigs with the coder agent configured for Gemini
+    model_configs = ModelClientConfigs(coder=gemini_coder_config)
+
+    # If you were then creating a MagenticUIConfig, you would pass this:
+    # magentic_ui_config = MagenticUIConfig(model_client_configs=model_configs)
+    ```
+
+    The `provider` field in `ComponentModel` tells the system which client class to load.
+    The `config` dictionary is passed directly to the constructor of that client class.
+    Ensure that the `GeminiChatCompletionClient` (or any custom client) can be imported
+    by the path specified in the `provider` string and that its `__init__` method
+    accepts the parameters provided in the `config` dictionary.
+
+    The `default_client_config` and `default_action_guard_config` in this class
+    currently use OpenAI. Changing these defaults for all unspecified agents would involve
+    modifying these class variables or the logic in `MagenticUIConfig` that applies them.
+    The example above shows how to override the client for a *specific* agent role.
+    """
+
+    orchestrator: Optional[Union[ComponentModel, Dict[str, Any]]] = None
         web_surfer (Optional[Union[ComponentModel, Dict[str, Any]]]): Configuration for the web surfer component. Default: None.
         coder (Optional[Union[ComponentModel, Dict[str, Any]]]): Configuration for the coder component. Default: None.
         file_surfer (Optional[Union[ComponentModel, Dict[str, Any]]]): Configuration for the file surfer component. Default: None.

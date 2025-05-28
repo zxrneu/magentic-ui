@@ -15,6 +15,7 @@ from autogen_core.models import (
     UserMessage,
     SystemMessage,
 )
+from magentic_ui.models.gemini_client import GeminiChatCompletionClient # Added for Gemini
 from pydantic import BaseModel
 from typing_extensions import Self
 
